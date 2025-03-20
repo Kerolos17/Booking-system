@@ -20,31 +20,43 @@
 
         <div id="reader" class="mt-4 w-full"></div>
         <p id="status" class="mt-4 text-gray-300">Waiting for scan...</p>
-
-        <div id="bookingDetails" class="hidden mt-6 p-4 bg-gray-900 rounded-lg shadow-md text-left">
-            <h3 class="text-xl font-bold text-cyan-400 mb-2">Booking Details</h3>
-            <div class="space-y-1">
-                <p><strong>Customer:</strong> <span id="customerName" class="text-gray-300"></span></p>
-                <p><strong>Phone:</strong> <span id="customerPhone" class="text-gray-300"></span></p>
-                <p><strong>Event:</strong> <span id="eventName" class="text-gray-300"></span></p>
-                <p><strong>Seats:</strong> <span id="seats" class="text-gray-300"></span></p>
-            </div>
-        </div>
     </div>
 
     <script>
         let scanner;
-        document.getElementById("startScanner").addEventListener("click", function() {
-            scanner = new Html5Qrcode("reader");
-            scanner.start(
-                { qrbox: { width: 250, height: 250 } }, // Removed facingMode option
-                { fps: 10 },
-                onScanSuccess,
-                onScanError
-            ).catch(err => console.error("Camera Error: ", err));
 
-            document.getElementById("startScanner").classList.add("hidden");
-            document.getElementById("stopScanner").classList.remove("hidden");
+        document.getElementById("startScanner").addEventListener("click", function() {
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                rememberLastUsedCamera: true,
+                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+            };
+
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices.length > 0) {
+                    let cameraId = devices[0].id; // Default to first camera
+
+                    // Use back camera for mobile, front for desktop
+                    if (navigator.userAgent.match(/Android|iPhone/i)) {
+                        let backCamera = devices.find(device => device.label.toLowerCase().includes("back"));
+                        if (backCamera) cameraId = backCamera.id;
+                    }
+
+                    scanner = new Html5Qrcode("reader");
+                    scanner.start(cameraId, config, onScanSuccess, onScanError)
+                        .then(() => {
+                            document.getElementById("startScanner").classList.add("hidden");
+                            document.getElementById("stopScanner").classList.remove("hidden");
+                        })
+                        .catch(err => {
+                            console.error("Camera Error:", err);
+                            alert("Camera access denied or unavailable");
+                        });
+                } else {
+                    alert("No cameras found on this device.");
+                }
+            }).catch(err => console.error("Camera Detection Error:", err));
         });
 
         document.getElementById("stopScanner").addEventListener("click", function() {
@@ -52,43 +64,16 @@
                 scanner.stop().then(() => {
                     document.getElementById("startScanner").classList.remove("hidden");
                     document.getElementById("stopScanner").classList.add("hidden");
-                }).catch(err => console.error("Stop Error: ", err));
+                }).catch(err => console.error("Stop Error:", err));
             }
         });
 
         function onScanSuccess(decodedText, decodedResult) {
-            fetch("{{ route('validate.qr') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ booking_id: decodedText })
-            })
-            .then(response => response.json())
-            .then(data => {
-                let statusElement = document.getElementById('status');
-                let bookingDetails = document.getElementById('bookingDetails');
-
-                if (data.status === "success") {
-                    statusElement.innerHTML = `<p class="text-green-500 font-semibold">${data.message}</p>`;
-
-                    document.getElementById('customerName').innerText = data.customer_name;
-                    document.getElementById('customerPhone').innerText = data.customer_phone;
-                    document.getElementById('eventName').innerText = data.event_name;
-                    document.getElementById('seats').innerText = data.seats;
-
-                    bookingDetails.classList.remove('hidden');
-                } else {
-                    statusElement.innerHTML = `<p class="text-red-500 font-semibold">${data.message}</p>`;
-                    bookingDetails.classList.add('hidden');
-                }
-            })
-            .catch(error => console.error("Error:", error));
+            alert("QR Code Scanned: " + decodedText);
         }
 
         function onScanError(errorMessage) {
-            console.log("Scan error: ", errorMessage);
+            console.log("Scan error:", errorMessage);
         }
     </script>
 </body>
