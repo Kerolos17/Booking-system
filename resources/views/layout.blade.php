@@ -8,7 +8,7 @@
     @vite('resources/css/app.css')
     <!-- Removed duplicate CSS inclusion -->
 </head>
-<body class="bg-gray-900 text-white">
+<body>
 
     <div class="container mx-auto py-8 my-auto h:full">
         @yield('content')
