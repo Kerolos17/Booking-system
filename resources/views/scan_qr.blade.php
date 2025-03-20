@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.0.8/minified/html5-qrcode.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="flex items-center justify-center bg-black min-h-screen bg-cover bg-center px-4" >
-
+<body class="flex items-center justify-center bg-black min-h-screen bg-cover bg-center px-4">
     <div class="bg-black bg-opacity-90 text-white p-6 sm:p-8 rounded-lg border border-blue-600 text-center max-w-xs sm:max-w-md md:max-w-lg w-full">
         <h2 class="text-2xl font-bold text-cyan-400 mb-4">Scan QR Code</h2>
 
@@ -22,7 +21,6 @@
         <div id="reader" class="mt-4 w-full"></div>
         <p id="status" class="mt-4 text-gray-300">Waiting for scan...</p>
 
-        <!-- Booking Details Section -->
         <div id="bookingDetails" class="hidden mt-6 p-4 bg-gray-900 rounded-lg shadow-md text-left">
             <h3 class="text-xl font-bold text-cyan-400 mb-2">Booking Details</h3>
             <div class="space-y-1">
@@ -37,20 +35,25 @@
     <script>
         let scanner;
         document.getElementById("startScanner").addEventListener("click", function() {
-            scanner = new Html5QrcodeScanner("reader", {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            });
-            scanner.render(onScanSuccess, onScanError);
+            scanner = new Html5Qrcode("reader");
+            scanner.start(
+                { qrbox: { width: 250, height: 250 } }, // Removed facingMode option
+                { fps: 10 },
+                onScanSuccess,
+                onScanError
+            ).catch(err => console.error("Camera Error: ", err));
 
             document.getElementById("startScanner").classList.add("hidden");
             document.getElementById("stopScanner").classList.remove("hidden");
         });
 
         document.getElementById("stopScanner").addEventListener("click", function() {
-            scanner.clear();
-            document.getElementById("startScanner").classList.remove("hidden");
-            document.getElementById("stopScanner").classList.add("hidden");
+            if (scanner) {
+                scanner.stop().then(() => {
+                    document.getElementById("startScanner").classList.remove("hidden");
+                    document.getElementById("stopScanner").classList.add("hidden");
+                }).catch(err => console.error("Stop Error: ", err));
+            }
         });
 
         function onScanSuccess(decodedText, decodedResult) {
