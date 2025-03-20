@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -18,7 +19,7 @@ class BookingController extends Controller
         return view('bookings.create');
     }
 
-    public function store(Request $request, Event $event)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'customer_name'  => 'required|string|max:255',
@@ -31,6 +32,13 @@ class BookingController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $today = Carbon::today();
+        $totalSeatsToday = Booking::whereDate('booking_time', $today)->sum('number_of_seats');
+
+        if ($totalSeatsToday + $request->number_of_seats > 100) {
+            return redirect()->back()->withErrors(['number_of_seats' => 'Daily limit of 100 seats has been reached.'])->withInput();
+        }
+
         $booking = Booking::create([
             'customer_name'   => $request->customer_name,
             'customer_email'  => $request->customer_email,
@@ -40,9 +48,7 @@ class BookingController extends Controller
             'status'          => 'pending',
         ]);
 
-
         $qrCodeData = $booking->id;
-
         $qrCode = QrCode::format('png')->size(200)->generate($qrCodeData);
 
         $qrPath = 'qrcodes/booking_' . $booking->id . '.png';
@@ -52,7 +58,6 @@ class BookingController extends Controller
         Mail::to($booking->customer_email)->send(new BookingConfirmationMail($booking));
         return redirect()->route('booking.confirmation', $booking->id);
     }
-
 
     public function confirmation(Booking $booking)
     {
@@ -88,9 +93,7 @@ class BookingController extends Controller
             'customer_name' => $booking->customer_name,
             'customer_email' => $booking->customer_email,
             'customer_phone' => $booking->customer_phone,
-            'event_name'   => $booking->event->title,
             'seats'        => $booking->number_of_seats,
-
         ]);
     }
 }
