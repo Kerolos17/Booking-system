@@ -19,8 +19,8 @@
             class="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 ">
     </div>
 
-    <a href="/" class="inline-block bg-btn-bg hover:bg-btn-hover text-white bg-black border-2 border-blue-600 hover:bg-blue-600 font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg mt-6 transition duration-300">
-        Back to Events
+    <a href="https://zonehookahlounge.com/" class="inline-block bg-btn-bg hover:bg-btn-hover text-white bg-black border-2 border-blue-600 hover:bg-blue-600 font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg mt-6 transition duration-300">
+        Zone Hookah 
     </a>
 </div>
 @endsection
