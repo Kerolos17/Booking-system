@@ -6,7 +6,6 @@
     <title>@yield('title', 'Event Booking')</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     @vite('resources/css/app.css')
-    <!-- Removed duplicate CSS inclusion -->
 </head>
 <body>
 

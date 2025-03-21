@@ -27,7 +27,7 @@
             <div class="space-y-1">
                 <p><strong>Customer:</strong> <span id="customerName" class="text-gray-300"></span></p>
                 <p><strong>Phone:</strong> <span id="customerPhone" class="text-gray-300"></span></p>
-                <p><strong>Event:</strong> <span id="eventName" class="text-gray-300"></span></p>
+                <p><strong>Date:</strong> <span id="date" class="text-gray-300"></span></p>
                 <p><strong>Seats:</strong> <span id="seats" class="text-gray-300"></span></p>
             </div>
         </div>
@@ -35,7 +35,7 @@
 
     <script>
         let scanner;
-        let isScanning = false; // متغير لمنع التكرار
+        let isScanning = false;
 
         document.getElementById("startScanner").addEventListener("click", function() {
             if (isScanning) return;
@@ -95,7 +95,7 @@
 
                     document.getElementById('customerName').innerText = data.customer_name;
                     document.getElementById('customerPhone').innerText = data.customer_phone;
-                    document.getElementById('eventName').innerText = data.event_name;
+                    document.getElementById('date').innerText = data.booking_time;
                     document.getElementById('seats').innerText = data.seats;
 
                     bookingDetails.classList.remove('hidden');
