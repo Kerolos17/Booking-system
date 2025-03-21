@@ -27,7 +27,7 @@
             <div class="space-y-1">
                 <p><strong>Customer:</strong> <span id="customerName" class="text-gray-300"></span></p>
                 <p><strong>Phone:</strong> <span id="customerPhone" class="text-gray-300"></span></p>
-                <p><strong>Date:</strong> <span id="date" class="text-gray-300"></span></p>
+                <p><strong>Booking Time:</strong> <span id="bookingTime" class="text-gray-300"></span></p>
                 <p><strong>Seats:</strong> <span id="seats" class="text-gray-300"></span></p>
             </div>
         </div>
@@ -95,7 +95,7 @@
 
                     document.getElementById('customerName').innerText = data.customer_name;
                     document.getElementById('customerPhone').innerText = data.customer_phone;
-                    document.getElementById('date').innerText = data.booking_time->format('Y-m-d H:i A');
+                    document.getElementById('bookingTime').innerText = data.booking_time;
                     document.getElementById('seats').innerText = data.seats;
 
                     bookingDetails.classList.remove('hidden');

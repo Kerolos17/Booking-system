@@ -93,6 +93,7 @@ class BookingController extends Controller
             'customer_name' => $booking->customer_name,
             'customer_email' => $booking->customer_email,
             'customer_phone' => $booking->customer_phone,
+            'booking_time' => $booking->booking_time,
             'seats'        => $booking->number_of_seats,
         ]);
     }
