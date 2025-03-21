@@ -35,6 +35,7 @@
 
     <script>
         let scanner;
+
         document.getElementById("startScanner").addEventListener("click", function() {
             scanner = new Html5Qrcode("reader");
             scanner.start(
@@ -53,11 +54,20 @@
                 scanner.stop().then(() => {
                     document.getElementById("startScanner").classList.remove("hidden");
                     document.getElementById("stopScanner").classList.add("hidden");
+                    document.getElementById("reader").innerHTML = ""; // تنظيف الكاميرا
                 }).catch(err => console.error("Stop Error: ", err));
             }
         });
 
         function onScanSuccess(decodedText, decodedResult) {
+            if (scanner) {
+                scanner.stop().then(() => {
+                    document.getElementById("startScanner").classList.remove("hidden");
+                    document.getElementById("stopScanner").classList.add("hidden");
+                    document.getElementById("reader").innerHTML = ""; // تنظيف الكاميرا بعد المسح
+                }).catch(err => console.error("Stop Error: ", err));
+            }
+
             fetch("{{ route('validate.qr') }}", {
                 method: "POST",
                 headers: {
@@ -85,7 +95,10 @@
                     bookingDetails.classList.add('hidden');
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('status').innerHTML = `<p class="text-red-500 font-semibold">Server Error. Please try again.</p>`;
+            });
         }
 
         function onScanError(errorMessage) {
