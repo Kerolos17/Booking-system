@@ -35,38 +35,47 @@
 
     <script>
         let scanner;
+        let isScanning = false; // متغير لمنع التكرار
 
         document.getElementById("startScanner").addEventListener("click", function() {
+            if (isScanning) return;
+            isScanning = true;
+
             scanner = new Html5Qrcode("reader");
             scanner.start(
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 onScanSuccess,
                 onScanError
-            ).catch(err => console.error("Camera Error: ", err));
+            ).catch(err => {
+                console.error("Camera Error: ", err);
+                isScanning = false;
+            });
 
             document.getElementById("startScanner").classList.add("hidden");
             document.getElementById("stopScanner").classList.remove("hidden");
         });
 
         document.getElementById("stopScanner").addEventListener("click", function() {
-            if (scanner) {
-                scanner.stop().then(() => {
-                    document.getElementById("startScanner").classList.remove("hidden");
-                    document.getElementById("stopScanner").classList.add("hidden");
-                    document.getElementById("reader").innerHTML = ""; // تنظيف الكاميرا
-                }).catch(err => console.error("Stop Error: ", err));
-            }
+            stopScanner();
         });
 
-        function onScanSuccess(decodedText, decodedResult) {
+        function stopScanner() {
             if (scanner) {
                 scanner.stop().then(() => {
+                    isScanning = false;
                     document.getElementById("startScanner").classList.remove("hidden");
                     document.getElementById("stopScanner").classList.add("hidden");
-                    document.getElementById("reader").innerHTML = ""; // تنظيف الكاميرا بعد المسح
+                    document.getElementById("reader").innerHTML = "";
                 }).catch(err => console.error("Stop Error: ", err));
             }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            if (!isScanning) return;
+            isScanning = false;
+
+            stopScanner();
 
             fetch("{{ route('validate.qr') }}", {
                 method: "POST",
