@@ -95,7 +95,7 @@
 
                     document.getElementById('customerName').innerText = data.customer_name;
                     document.getElementById('customerPhone').innerText = data.customer_phone;
-                    document.getElementById('date').innerText = data.booking_time;
+                    document.getElementById('date').innerText = data.booking_time->format('Y-m-d H:i A');
                     document.getElementById('seats').innerText = data.seats;
 
                     bookingDetails.classList.remove('hidden');
