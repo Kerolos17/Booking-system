@@ -11,7 +11,7 @@
     <p><strong>Seats Reserved:</strong> {{ $booking->number_of_seats }}</p>
     <div class="qr-code mb-2">
         <h3>Your QR Code:</h3>
-        <img src="{{ asset('storage/' . $booking->qr_code) }}" alt="QR Code">
+        <img class="border-2 border-white" src="{{ asset('storage/' . $booking->qr_code) }}" alt="QR Code">
     </div>
     <p>Your QR Code is attached to this email. Please show it at the entrance.</p>
     <br>
