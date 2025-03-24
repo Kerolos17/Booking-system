@@ -49,7 +49,7 @@ class BookingController extends Controller
         ]);
 
         $qrCodeData = $booking->id;
-        $qrCode = QrCode::format('png')->size(200)->generate($qrCodeData);
+        $qrCode = QrCode::format('png')->size(300)->generate($qrCodeData)->margin(10);
 
         $qrPath = 'qrcodes/booking_' . $booking->id . '.png';
         Storage::disk('public')->put($qrPath, $qrCode);
