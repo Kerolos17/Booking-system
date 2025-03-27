@@ -48,13 +48,13 @@ class BookingController extends Controller
             'status'          => 'pending',
         ]);
 
-        $qrCodeData = $booking->id;
-        $qrCode = QrCode::format('png')->size(300)->margin(5)->generate($qrCodeData);
+        // $qrCodeData = $booking->id;
+        // $qrCode = QrCode::format('png')->size(300)->margin(5)->generate($qrCodeData);
 
-        $qrPath = 'qrcodes/booking_' . $booking->id . '.png';
-        Storage::disk('public')->put($qrPath, $qrCode);
+        // $qrPath = 'qrcodes/booking_' . $booking->id . '.png';
+        // Storage::disk('public')->put($qrPath, $qrCode);
 
-        $booking->update(['qr_code' => $qrPath]);
+        // $booking->update(['qr_code' => $qrPath]);
         Mail::to($booking->customer_email)->send(new BookingConfirmationMail($booking));
         return redirect()->route('booking.confirmation', $booking->id);
     }

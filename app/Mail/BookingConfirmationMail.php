@@ -20,8 +20,8 @@ class BookingConfirmationMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Booking Confirmation')
-            ->view('emails.booking_confirmation')
-            ->attach(storage_path('app/public/' . $this->booking->qr_code));
+        return $this->subject('Your Reservation at Zone Hookah Lounge is Confirmed!')
+            ->view('emails.booking_confirmation');
+            // ->attach(storage_path('app/public/' . $this->booking->qr_code));
     }
 }
